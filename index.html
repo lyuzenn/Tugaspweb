@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hujan Salju dengan Pengatur Kecepatan</title>
+    <style>
+        body {
+            background: url('bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+        img {
+            position: absolute;
+            bottom: 0;
+            left: 60%;
+        }
+        .snow {
+            position: absolute;
+            top: -10px;
+            background-color: white;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slider -->
+     <img src="gif.gif" alt="yauda">
+    <div id="controls">
+        <label for="speed"></label>
+        <input type="range" id="speed" min="1" max="10" step="0.5" value="5">
+    </div>
+
+    <script>
+        let speed = 5; 
+        let interval; 
+
+        document.getElementById("speed").addEventListener("input", function() {
+            speed = this.value;
+            updateSnowfallRate(); 
+        });
+
+        function createSnowflake() {
+            const snow = document.createElement("div");
+            snow.classList.add("snow");
+            document.body.appendChild(snow);
+
+            let startX = Math.random() * window.innerWidth;
+            let size = Math.random() * 5 + 5;
+            let duration = 13 / speed; 
+
+            snow.style.left = `${startX}px`;
+            snow.style.width = `${size}px`;
+            snow.style.height = `${size}px`;
+
+            // Animasi jatuh
+            let start = Date.now();
+            function fall() {
+                let elapsed = (Date.now() - start) / 1000; 
+                let progress = elapsed / duration;
+                snow.style.top = `${progress * window.innerHeight}px`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(fall);
+                } else {
+                    snow.remove();
+                }
+            }
+            fall();
+        }
+
+        function updateSnowfallRate() {
+            clearInterval(interval); // Hentikan interval lama
+
+            let snowfallRate = Math.max(20, 200 - speed * 18); 
+            // Jika speed tinggi, interval lebih kecil (lebih cepat muncul)
+
+            interval = setInterval(() => {
+                for (let i = 0; i < speed / 2; i++) { // Jumlah salju dibuat lebih banyak seiring kecepatan naik
+                    createSnowflake();
+                }
+            }, snowfallRate);
+        }
+
+        updateSnowfallRate(); // Mulai dengan nilai default
+    </script>
+
+</body>
+</html>
